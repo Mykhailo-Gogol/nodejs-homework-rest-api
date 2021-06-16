@@ -1,4 +1,4 @@
-const statusCode = {
+const HttpCode = {
   OK: 200,
   CREATED: 201,
   BAD_REQUEST: 400,
@@ -6,4 +6,4 @@ const statusCode = {
   INTERNAL_SERVER_ERROR: 500
 }
 
-module.exports = { statusCode }
+module.exports = { HttpCode }

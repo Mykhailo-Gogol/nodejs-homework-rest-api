@@ -3,7 +3,8 @@ const router = express.Router()
 
 const {
   validateCreateContact,
-  validateUpdateContact
+  validateUpdateContact,
+  validateReplaceContact
 } = require('../../validation/validate')
 
 const {
@@ -23,5 +24,7 @@ router.delete('/:contactId', deleteContactByIdController)
 router.post('/', validateCreateContact, addContactController)
 
 router.patch('/:contactId', validateUpdateContact, updateContactByIdController)
+
+router.put('/:contactId', validateReplaceContact, updateContactByIdController)
 
 module.exports = router

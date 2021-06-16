@@ -6,19 +6,19 @@ const {
   updateContact
 } = require('../model')
 
-const { statusCode } = require('../heplers/constants')
+const { HttpCode } = require('../heplers/constants')
 
 const getContactsController = async (req, res, next) => {
   try {
     const contacts = await listContacts()
-    res.status(statusCode.OK).json({
+    res.status(HttpCode.OK).json({
       status: 'success',
-      code: statusCode.OK,
+      code: HttpCode.OK,
       data: { contacts }
     })
   } catch (error) {
-    res.status(statusCode.NOT_FOUND).json({
-      status: statusCode.NOT_FOUND,
+    res.status(HttpCode.NOT_FOUND).json({
+      status: HttpCode.NOT_FOUND,
       message: 'Not found'
     })
   }
@@ -29,14 +29,14 @@ const getContactByIdController = async (req, res, next) => {
     const id = req.params.contactId
     const contact = await getContactById(id)
     if (contact) {
-      res.status(statusCode.OK).json({
+      res.status(HttpCode.OK).json({
         status: 'success',
-        code: statusCode.OK,
+        code: HttpCode.OK,
         data: { contact }
       })
     } else {
       return next({
-        status: statusCode.NOT_FOUND,
+        status: HttpCode.NOT_FOUND,
         message: 'Not found'
       })
     }
@@ -52,14 +52,14 @@ const deleteContactByIdController = async (req, res, next) => {
     const idList = conactsList.map((contact) => contact.id)
     if (idList.some((contactId) => contactId === Number(id))) {
       const newContactList = await removeContact(id)
-      res.status(statusCode.OK).json({
+      res.status(HttpCode.OK).json({
         status: 'success',
-        code: statusCode.OK,
+        code: HttpCode.OK,
         data: { newContactList }
       })
     } else {
       return next({
-        code: statusCode.NOT_FOUND,
+        code: HttpCode.NOT_FOUND,
         message: 'Not found'
       })
     }
@@ -71,9 +71,9 @@ const deleteContactByIdController = async (req, res, next) => {
 const addContactController = async (req, res, next) => {
   try {
     const newContact = await addContact(req.body)
-    res.status(statusCode.CREATED).json({
+    res.status(HttpCode.CREATED).json({
       status: 'success',
-      code: statusCode.CREATED,
+      code: HttpCode.CREATED,
       message: 'contact created',
       data: { newContact }
     })
@@ -88,14 +88,14 @@ const updateContactByIdController = async (req, res, next) => {
     const updatedContact = await updateContact(id, req.body)
     const contact = await getContactById(id)
     if (contact) {
-      res.status(statusCode.OK).json({
+      res.status(HttpCode.OK).json({
         status: 'success',
-        code: statusCode.OK,
+        code: HttpCode.OK,
         data: { updatedContact }
       })
     } else {
       return next({
-        status: statusCode.NOT_FOUND,
+        status: HttpCode.NOT_FOUND,
         message: 'Not found'
       })
     }
