@@ -1,4 +1,4 @@
-const { listContacts, removeContact } = require('../model')
+// const { listContacts, removeContact } = require('../model')
 
 const { HttpCode } = require('../heplers/constants')
 const ObjectId = require('mongodb').ObjectID
@@ -110,6 +110,35 @@ const updateContactByIdController = async (req, res, next) => {
     next(error)
   }
 }
+
+// const updateFafouriteByIdController = async (req, res, next) => {
+//   try {
+//     const id = req.params.contactId
+//     const { name, email, phone } = req.body
+
+//     await req.db.Contacts.updateOne(
+//       { _id: ObjectId(id) },
+//       { $set: { name, email, phone } }
+//     )
+
+//     const contact = await req.db.Contacts.findOne({ _id: ObjectId(id) })
+
+//     if (contact) {
+//       res.status(HttpCode.OK).json({
+//         status: 'success',
+//         code: HttpCode.OK,
+//         data: { contact }
+//       })
+//     } else {
+//       return next({
+//         status: HttpCode.NOT_FOUND,
+//         message: 'Not found'
+//       })
+//     }
+//   } catch (error) {
+//     next(error)
+//   }
+// }
 
 module.exports = {
   getContactsController,
