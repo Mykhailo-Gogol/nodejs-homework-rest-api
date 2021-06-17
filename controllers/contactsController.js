@@ -7,12 +7,10 @@ const {
 } = require('../model')
 
 const { HttpCode } = require('../heplers/constants')
-const { connectMongo } = require('../db/connections')
 
 const getContactsController = async (req, res, next) => {
   try {
-    const { ContactsCollection } = await connectMongo()
-    const MongoContacts = await ContactsCollection.find({}).toArray()
+    const MongoContacts = await req.db.Contacts.find({}).toArray()
 
     res.status(HttpCode.OK).json({
       status: 'success',

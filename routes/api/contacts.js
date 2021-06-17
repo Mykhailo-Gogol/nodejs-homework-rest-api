@@ -7,6 +7,8 @@ const {
   validateReplaceContact
 } = require('../../middlewares/validationMiddleware')
 
+const modelsMiddleware = require('../../middlewares/models')
+
 const {
   getContactsController,
   getContactByIdController,
@@ -15,7 +17,9 @@ const {
   updateContactByIdController
 } = require('../../controllers/contactsController')
 
-router.get('/', getContactsController)
+// router.use()
+
+router.get('/', modelsMiddleware, getContactsController)
 
 router.get('/:contactId', getContactByIdController)
 
