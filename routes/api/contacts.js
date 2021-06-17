@@ -8,6 +8,7 @@ const {
 } = require('../../middlewares/validationMiddleware')
 
 const modelsMiddleware = require('../../middlewares/models')
+const { asyncWrapper } = require('../../heplers/asyncWrapper')
 
 const {
   getContactsController,
@@ -19,16 +20,24 @@ const {
 
 router.use(modelsMiddleware)
 
-router.get('/', getContactsController)
+router.get('/', asyncWrapper(getContactsController))
 
-router.get('/:contactId', getContactByIdController)
+router.get('/:contactId', asyncWrapper(getContactByIdController))
 
-router.delete('/:contactId', deleteContactByIdController)
+router.delete('/:contactId', asyncWrapper(deleteContactByIdController))
 
-router.post('/', validateCreateContact, addContactController)
+router.post('/', validateCreateContact, asyncWrapper(addContactController))
 
-router.patch('/:contactId', validateUpdateContact, updateContactByIdController)
+router.patch(
+  '/:contactId',
+  validateUpdateContact,
+  asyncWrapper(updateContactByIdController)
+)
 
-router.put('/:contactId', validateReplaceContact, updateContactByIdController)
+router.put(
+  '/:contactId',
+  validateReplaceContact,
+  asyncWrapper(updateContactByIdController)
+)
 
 module.exports = router
