@@ -1,12 +1,7 @@
-const {
-  listContacts,
-  getContactById,
-  removeContact,
-  addContact,
-  updateContact
-} = require('../model')
+const { listContacts, removeContact } = require('../model')
 
 const { HttpCode } = require('../heplers/constants')
+const ObjectId = require('mongodb').ObjectID
 
 const getContactsController = async (req, res, next) => {
   try {
@@ -28,7 +23,7 @@ const getContactsController = async (req, res, next) => {
 const getContactByIdController = async (req, res, next) => {
   try {
     const id = req.params.contactId
-    const contact = await getContactById(id)
+    const contact = await req.db.Contacts.findOne({ _id: ObjectId(id) })
     if (contact) {
       res.status(HttpCode.OK).json({
         status: 'success',
@@ -49,18 +44,17 @@ const getContactByIdController = async (req, res, next) => {
 const deleteContactByIdController = async (req, res, next) => {
   try {
     const id = req.params.contactId
-    const conactsList = await listContacts()
-    const idList = conactsList.map((contact) => contact.id)
-    if (idList.some((contactId) => contactId === Number(id))) {
-      const newContactList = await removeContact(id)
+    const contact = await req.db.Contacts.findOne({ _id: ObjectId(id) })
+    await req.db.Contacts.deleteOne({ _id: ObjectId(id) })
+    if (contact) {
       res.status(HttpCode.OK).json({
         status: 'success',
         code: HttpCode.OK,
-        data: { newContactList }
+        data: { contact }
       })
     } else {
       return next({
-        code: HttpCode.NOT_FOUND,
+        status: HttpCode.NOT_FOUND,
         message: 'Not found'
       })
     }
@@ -71,7 +65,12 @@ const deleteContactByIdController = async (req, res, next) => {
 
 const addContactController = async (req, res, next) => {
   try {
-    const newContact = await addContact(req.body)
+    const { name, email, phone } = await req.body
+
+    const newContact = { name, email, phone }
+
+    await req.db.Contacts.insert(newContact)
+
     res.status(HttpCode.CREATED).json({
       status: 'success',
       code: HttpCode.CREATED,
@@ -86,13 +85,20 @@ const addContactController = async (req, res, next) => {
 const updateContactByIdController = async (req, res, next) => {
   try {
     const id = req.params.contactId
-    const updatedContact = await updateContact(id, req.body)
-    const contact = await getContactById(id)
+    const { name, email, phone } = req.body
+
+    await req.db.Contacts.updateOne(
+      { _id: ObjectId(id) },
+      { $set: { name, email, phone } }
+    )
+
+    const contact = await req.db.Contacts.findOne({ _id: ObjectId(id) })
+
     if (contact) {
       res.status(HttpCode.OK).json({
         status: 'success',
         code: HttpCode.OK,
-        data: { updatedContact }
+        data: { contact }
       })
     } else {
       return next({

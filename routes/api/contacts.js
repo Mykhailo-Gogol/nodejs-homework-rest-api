@@ -17,9 +17,9 @@ const {
   updateContactByIdController
 } = require('../../controllers/contactsController')
 
-// router.use()
+router.use(modelsMiddleware)
 
-router.get('/', modelsMiddleware, getContactsController)
+router.get('/', getContactsController)
 
 router.get('/:contactId', getContactByIdController)
 
