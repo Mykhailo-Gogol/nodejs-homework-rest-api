@@ -5,7 +5,7 @@ const {
   validateCreateContact,
   validateUpdateContact,
   validateReplaceContact
-} = require('../../validation/validate')
+} = require('../../middlewares/validationMiddleware')
 
 const {
   getContactsController,
