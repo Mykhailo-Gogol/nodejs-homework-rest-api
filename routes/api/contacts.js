@@ -7,7 +7,6 @@ const {
   validateReplaceContact
 } = require('../../middlewares/validationMiddleware')
 
-const modelsMiddleware = require('../../middlewares/models')
 const { asyncWrapper } = require('../../heplers/asyncWrapper')
 
 const {
@@ -17,8 +16,6 @@ const {
   addContactController,
   updateContactByIdController
 } = require('../../controllers/contactsController')
-
-router.use(modelsMiddleware)
 
 router.get('/', asyncWrapper(getContactsController))
 

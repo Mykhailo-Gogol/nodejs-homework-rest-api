@@ -1,19 +1,11 @@
-const MongoClient = require('mongodb').MongoClient
-const collections = {}
-
-const getCollections = () => {
-  return collections
-}
+const mongoose = require('mongoose')
 
 const connectMongo = async () => {
   try {
-    const client = await MongoClient.connect(process.env.MONGO_CONNECT_URL, {
+    mongoose.connect(process.env.MONGO_CONNECT_URL, {
       useNewUrlParser: true,
       useUnifiedTopology: true
     })
-    const db = client.db()
-
-    collections.Contacts = db.collection('contacts')
 
     console.log('Mongo database connected successfully')
   } catch (err) {
@@ -22,4 +14,4 @@ const connectMongo = async () => {
   }
 }
 
-module.exports = { connectMongo, getCollections }
+module.exports = { connectMongo }

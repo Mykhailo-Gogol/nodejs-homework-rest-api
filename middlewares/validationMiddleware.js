@@ -10,7 +10,7 @@ const schemaCreateContact = Joi.object({
   email: Joi.string()
     .email({
       minDomainSegments: 2,
-      tlds: { allow: ['com', 'net', 'uk'] }
+      tlds: { allow: ['com', 'net', 'uk', 'ca'] }
     })
     .required(),
   phone: Joi.string().required(),
@@ -26,7 +26,7 @@ const schemaUpdateContact = Joi.object({
   email: Joi.string()
     .email({
       minDomainSegments: 2,
-      tlds: { allow: ['com', 'net', 'uk'] }
+      tlds: { allow: ['com', 'net', 'uk', 'ca'] }
     })
     .optional(),
   phone: Joi.string().optional(),
@@ -42,7 +42,7 @@ const schemaReplaceContact = Joi.object({
   email: Joi.string()
     .email({
       minDomainSegments: 2,
-      tlds: { allow: ['com', 'net', 'uk'] }
+      tlds: { allow: ['com', 'net', 'uk', 'ca'] }
     })
     .required(),
   phone: Joi.string().required(),
