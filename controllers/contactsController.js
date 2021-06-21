@@ -21,9 +21,7 @@ const getContactByIdController = async (req, res, next) => {
       code: HttpCode.OK,
       data: { contact }
     })
-  }
-
-  if (!contact) {
+  } else {
     res.status(HttpCode.BAD_REQUEST).json({
       status: HttpCode.BAD_REQUEST,
       message: 'Not found'
@@ -43,9 +41,7 @@ const deleteContactByIdController = async (req, res, next) => {
       code: HttpCode.OK,
       data: { contact }
     })
-  }
-
-  if (!contact) {
+  } else {
     res.status(HttpCode.BAD_REQUEST).json({
       status: HttpCode.BAD_REQUEST,
       message: 'Not found'
@@ -54,9 +50,7 @@ const deleteContactByIdController = async (req, res, next) => {
 }
 
 const addContactController = async (req, res, next) => {
-  const { name, email, phone, favorite } = await req.body
-
-  const newContact = new Contact({ name, email, phone, favorite })
+  const newContact = new Contact({ ...req.body })
   await newContact.save()
 
   res.status(HttpCode.CREATED).json({
@@ -69,11 +63,14 @@ const addContactController = async (req, res, next) => {
 
 const updateContactByIdController = async (req, res, next) => {
   const id = req.params.contactId
-  const { name, email, phone, favorite } = req.body
 
-  await Contact.findByIdAndUpdate(id, {
-    $set: { name, email, phone, favorite }
-  })
+  await Contact.findByIdAndUpdate(
+    id,
+    {
+      $set: { ...req.body }
+    },
+    { new: true }
+  )
 
   const contact = await Contact.findById(id)
 
@@ -83,9 +80,7 @@ const updateContactByIdController = async (req, res, next) => {
       code: HttpCode.OK,
       data: { contact }
     })
-  }
-
-  if (!contact) {
+  } else {
     res.status(HttpCode.BAD_REQUEST).json({
       status: HttpCode.BAD_REQUEST,
       message: 'Not found'
@@ -115,9 +110,7 @@ const updateFaforiteByIdController = async (req, res, next) => {
       code: HttpCode.OK,
       data: { contact }
     })
-  }
-
-  if (!contact) {
+  } else {
     res.status(HttpCode.BAD_REQUEST).json({
       status: HttpCode.BAD_REQUEST,
       message: 'Not found'
