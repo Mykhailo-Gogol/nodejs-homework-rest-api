@@ -33,6 +33,10 @@ const schemaUpdateContact = Joi.object({
   favorite: Joi.boolean().optional()
 })
 
+const schemaUpdateFavorite = Joi.object({
+  favorite: Joi.boolean().required()
+})
+
 const schemaReplaceContact = Joi.object({
   name: Joi.string()
     .pattern(/^[a-z\d\-_\s]+$/i)
@@ -75,6 +79,10 @@ const validateUpdateContact = (req, res, next) => {
   return validate(schemaUpdateContact, req.body, next)
 }
 
+const validateUpdateFavorite = (req, res, next) => {
+  return validate(schemaUpdateFavorite, req.body, next)
+}
+
 const validateReplaceContact = (req, res, next) => {
   return validate(schemaReplaceContact, req.body, next)
 }
@@ -82,5 +90,6 @@ const validateReplaceContact = (req, res, next) => {
 module.exports = {
   validateCreateContact,
   validateUpdateContact,
-  validateReplaceContact
+  validateReplaceContact,
+  validateUpdateFavorite
 }

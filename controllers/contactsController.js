@@ -93,39 +93,43 @@ const updateContactByIdController = async (req, res, next) => {
   }
 }
 
-// const updateFaforiteByIdController = async (req, res, next) => {
-//   try {
-//     const id = req.params.contactId
-//     const { name, email, phone } = req.body
+const updateFaforiteByIdController = async (req, res, next) => {
+  const id = req.params.contactId
+  const { favorite } = req.body
 
-//     await req.db.Contacts.updateOne(
-//       { _id: ObjectId(id) },
-//       { $set: { name, email, phone } }
-//     )
+  if (!req.body) {
+    res.status(HttpCode.OK).json({
+      status: 'success',
+      code: HttpCode.OK,
+      data: { message: 'missing field favorite' }
+    })
+  }
 
-//     const contact = await req.db.Contacts.findOne({ _id: ObjectId(id) })
+  await Contact.findByIdAndUpdate(id, { $set: { favorite } })
 
-//     if (contact) {
-//       res.status(HttpCode.OK).json({
-//         status: 'success',
-//         code: HttpCode.OK,
-//         data: { contact }
-//       })
-//     } else {
-//       return next({
-//         status: HttpCode.NOT_FOUND,
-//         message: 'Not found'
-//       })
-//     }
-//   } catch (error) {
-//     next(error)
-//   }
-// }
+  const contact = await Contact.findById(id)
+
+  if (contact) {
+    res.status(HttpCode.OK).json({
+      status: 'success',
+      code: HttpCode.OK,
+      data: { contact }
+    })
+  }
+
+  if (!contact) {
+    res.status(HttpCode.BAD_REQUEST).json({
+      status: HttpCode.BAD_REQUEST,
+      message: 'Not found'
+    })
+  }
+}
 
 module.exports = {
   getContactsController,
   getContactByIdController,
   deleteContactByIdController,
   addContactController,
-  updateContactByIdController
+  updateContactByIdController,
+  updateFaforiteByIdController
 }

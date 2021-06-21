@@ -4,7 +4,8 @@ const router = express.Router()
 const {
   validateCreateContact,
   validateUpdateContact,
-  validateReplaceContact
+  validateReplaceContact,
+  validateUpdateFavorite
 } = require('../../middlewares/validationMiddleware')
 
 const { asyncWrapper } = require('../../heplers/asyncWrapper')
@@ -14,7 +15,8 @@ const {
   getContactByIdController,
   deleteContactByIdController,
   addContactController,
-  updateContactByIdController
+  updateContactByIdController,
+  updateFaforiteByIdController
 } = require('../../controllers/contactsController')
 
 router.get('/', asyncWrapper(getContactsController))
@@ -29,6 +31,11 @@ router.patch(
   '/:contactId',
   validateUpdateContact,
   asyncWrapper(updateContactByIdController)
+)
+router.patch(
+  '/:contactId/favorite',
+  validateUpdateFavorite,
+  asyncWrapper(updateFaforiteByIdController)
 )
 
 router.put(
