@@ -1,9 +1,9 @@
-const { HttpCode } = require('../heplers/constants')
+const { HttpCode } = require('../src/heplers/constants')
 
-const app = require('../app')
+const app = require('../src/app')
 require('dotenv').config()
 
-const { connectMongo } = require('../db/connections')
+const { connectMongo } = require('../src/db/connections')
 const PORT = process.env.PORT || 3000
 
 app.use((error, req, res, next) => {

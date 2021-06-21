@@ -1,19 +1,35 @@
-const { Contact } = require('../db/contactModel')
 const { HttpCode } = require('../heplers/constants')
 
-const getContactsController = async (req, res, next) => {
-  const contacts = await Contact.find({})
+const {
+  getContacts,
+  getContactById,
+  deleteContactById,
+  addContact,
+  updateContactById,
+  updateFaforiteById
+} = require('../services/contactsService')
 
-  res.status(HttpCode.OK).json({
-    status: 'success',
-    code: HttpCode.OK,
-    data: { contacts }
-  })
+const getContactsController = async (req, res, next) => {
+  const contacts = await getContacts()
+
+  if (contacts) {
+    res.status(HttpCode.OK).json({
+      status: 'success',
+      code: HttpCode.OK,
+      data: { contacts }
+    })
+  } else {
+    res.status(HttpCode.BAD_REQUEST).json({
+      code: HttpCode.BAD_REQUEST,
+      status: 'success',
+      message: 'Not found'
+    })
+  }
 }
 
 const getContactByIdController = async (req, res, next) => {
   const id = req.params.contactId
-  const contact = await Contact.findById(id)
+  const contact = await getContactById(id)
 
   if (contact) {
     res.status(HttpCode.OK).json({
@@ -23,7 +39,8 @@ const getContactByIdController = async (req, res, next) => {
     })
   } else {
     res.status(HttpCode.BAD_REQUEST).json({
-      status: HttpCode.BAD_REQUEST,
+      code: HttpCode.BAD_REQUEST,
+      status: 'success',
       message: 'Not found'
     })
   }
@@ -31,58 +48,59 @@ const getContactByIdController = async (req, res, next) => {
 
 const deleteContactByIdController = async (req, res, next) => {
   const id = req.params.contactId
-  const contact = await Contact.findById(id)
-
-  await Contact.findByIdAndDelete(id)
+  const contact = await deleteContactById(id)
 
   if (contact) {
     res.status(HttpCode.OK).json({
       status: 'success',
+      message: 'deleted',
       code: HttpCode.OK,
       data: { contact }
     })
   } else {
     res.status(HttpCode.BAD_REQUEST).json({
-      status: HttpCode.BAD_REQUEST,
+      code: HttpCode.BAD_REQUEST,
+      status: 'success',
       message: 'Not found'
     })
   }
 }
 
 const addContactController = async (req, res, next) => {
-  const newContact = new Contact({ ...req.body })
-  await newContact.save()
+  const newContact = await addContact(req.body)
 
-  res.status(HttpCode.CREATED).json({
-    status: 'success',
-    code: HttpCode.CREATED,
-    message: 'contact created',
-    data: { newContact }
-  })
+  if (newContact) {
+    res.status(HttpCode.CREATED).json({
+      status: 'success',
+      code: HttpCode.CREATED,
+      message: 'created',
+      data: { newContact }
+    })
+  } else {
+    res.status(HttpCode.BAD_REQUEST).json({
+      code: HttpCode.BAD_REQUEST,
+      status: 'success',
+      message: 'Not found'
+    })
+  }
 }
 
 const updateContactByIdController = async (req, res, next) => {
   const id = req.params.contactId
 
-  await Contact.findByIdAndUpdate(
-    id,
-    {
-      $set: { ...req.body }
-    },
-    { new: true }
-  )
-
-  const contact = await Contact.findById(id)
+  const contact = await updateContactById(id, req.body)
 
   if (contact) {
     res.status(HttpCode.OK).json({
       status: 'success',
       code: HttpCode.OK,
+      message: 'updated',
       data: { contact }
     })
   } else {
     res.status(HttpCode.BAD_REQUEST).json({
-      status: HttpCode.BAD_REQUEST,
+      code: HttpCode.BAD_REQUEST,
+      status: 'success',
       message: 'Not found'
     })
   }
@@ -90,7 +108,8 @@ const updateContactByIdController = async (req, res, next) => {
 
 const updateFaforiteByIdController = async (req, res, next) => {
   const id = req.params.contactId
-  const { favorite } = req.body
+
+  const contact = await updateFaforiteById(id, req.body)
 
   if (!req.body) {
     res.status(HttpCode.OK).json({
@@ -100,19 +119,17 @@ const updateFaforiteByIdController = async (req, res, next) => {
     })
   }
 
-  await Contact.findByIdAndUpdate(id, { $set: { favorite } })
-
-  const contact = await Contact.findById(id)
-
   if (contact) {
     res.status(HttpCode.OK).json({
       status: 'success',
       code: HttpCode.OK,
+      message: 'updated',
       data: { contact }
     })
   } else {
     res.status(HttpCode.BAD_REQUEST).json({
-      status: HttpCode.BAD_REQUEST,
+      code: HttpCode.BAD_REQUEST,
+      status: 'success',
       message: 'Not found'
     })
   }

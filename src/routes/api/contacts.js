@@ -8,7 +8,7 @@ const {
   validateUpdateFavorite
 } = require('../../middlewares/validationMiddleware')
 
-const { asyncWrapper } = require('../../heplers/asyncWrapper')
+const { asyncErrorWrapper } = require('../../heplers/asyncErrorWrapper')
 
 const {
   getContactsController,
@@ -19,29 +19,29 @@ const {
   updateFaforiteByIdController
 } = require('../../controllers/contactsController')
 
-router.get('/', asyncWrapper(getContactsController))
+router.get('/', asyncErrorWrapper(getContactsController))
 
-router.get('/:contactId', asyncWrapper(getContactByIdController))
+router.get('/:contactId', asyncErrorWrapper(getContactByIdController))
 
-router.delete('/:contactId', asyncWrapper(deleteContactByIdController))
+router.delete('/:contactId', asyncErrorWrapper(deleteContactByIdController))
 
-router.post('/', validateCreateContact, asyncWrapper(addContactController))
+router.post('/', validateCreateContact, asyncErrorWrapper(addContactController))
 
 router.patch(
   '/:contactId',
   validateUpdateContact,
-  asyncWrapper(updateContactByIdController)
+  asyncErrorWrapper(updateContactByIdController)
 )
 router.patch(
   '/:contactId/favorite',
   validateUpdateFavorite,
-  asyncWrapper(updateFaforiteByIdController)
+  asyncErrorWrapper(updateFaforiteByIdController)
 )
 
 router.put(
   '/:contactId',
   validateReplaceContact,
-  asyncWrapper(updateContactByIdController)
+  asyncErrorWrapper(updateContactByIdController)
 )
 
 module.exports = router

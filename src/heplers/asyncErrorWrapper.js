@@ -1,9 +1,9 @@
-const asyncWrapper = (controller) => {
+const asyncErrorWrapper = (controller) => {
   return (req, res, next) => {
     controller(req, res).catch(next)
   }
 }
 
 module.exports = {
-  asyncWrapper
+  asyncErrorWrapper
 }
