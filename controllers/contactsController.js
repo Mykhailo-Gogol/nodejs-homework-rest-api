@@ -1,6 +1,7 @@
 // const { listContacts, removeContact } = require('../model')
 
 const { HttpCode } = require('../heplers/constants')
+
 const ObjectId = require('mongodb').ObjectID
 
 const getContactsController = async (req, res, next) => {
@@ -65,9 +66,9 @@ const deleteContactByIdController = async (req, res, next) => {
 
 const addContactController = async (req, res, next) => {
   try {
-    const { name, email, phone } = await req.body
+    const { name, email, phone, favorite } = await req.body
 
-    const newContact = { name, email, phone }
+    const newContact = { name, email, phone, favorite }
 
     await req.db.Contacts.insert(newContact)
 
@@ -85,11 +86,11 @@ const addContactController = async (req, res, next) => {
 const updateContactByIdController = async (req, res, next) => {
   try {
     const id = req.params.contactId
-    const { name, email, phone } = req.body
+    const { name, email, phone, favorite } = req.body
 
     await req.db.Contacts.updateOne(
       { _id: ObjectId(id) },
-      { $set: { name, email, phone } }
+      { $set: { name, email, phone, favorite } }
     )
 
     const contact = await req.db.Contacts.findOne({ _id: ObjectId(id) })
