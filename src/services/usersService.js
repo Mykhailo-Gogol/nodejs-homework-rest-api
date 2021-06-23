@@ -1,8 +1,8 @@
-// const bcrypt = require('bcrypt')
-// const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 const { User } = require('../model/userModel')
-// const { NotAuthorizedError } = require('../helpers/errors')
+const { NotAuthorizedError } = require('../heplers/errors')
 
 const signUp = async (email, password) => {
   const user = new User({
@@ -12,35 +12,34 @@ const signUp = async (email, password) => {
   await user.save()
 }
 
-// const login = async (id, res) => {
-//   const user = await User.findOne({ email })
+const login = async (email, password) => {
+  const user = await User.findOne({ email })
 
-//   if (!user) {
-//     throw new NotAuthorizedError(`No user with email '${email}' found`)
-//   }
+  if (!user) {
+    throw new NotAuthorizedError(`No user with email '${email}' found`)
+  }
 
-//   if (!(await bcrypt.compare(password, user.password))) {
-//     throw new NotAuthorizedError('Wrong password')
-//   }
+  if (!(await bcrypt.compare(password, user.password))) {
+    throw new NotAuthorizedError('Wrong password')
+  }
 
-//   const token = jwt.sign(
-//     {
-//       _id: user._id,
-//       createdAt: user.createdAt
-//     },
-//     process.env.JWT_SECRET
-//   )
+  const token = jwt.sign(
+    {
+      _id: user._id
+    },
+    process.env.JWT_SECRET
+  )
 
-//   return token
-// }
+  return token
+}
 
-// const logout = async (id, res) => {}
+const logout = async (id, res) => {}
 
-// const getCurrent = async (id, res) => {}
+const getCurrent = async (id, res) => {}
 
 module.exports = {
-  signUp
-  // login,
-  // logout,
-  // getCurrent
+  signUp,
+  login,
+  logout,
+  getCurrent
 }

@@ -10,7 +10,9 @@ const {
 } = require('../services/contactsService')
 
 const getContactsController = async (req, res, next) => {
-  const contacts = await getContacts()
+  const { _id } = req.user
+
+  const contacts = await getContacts(_id)
 
   if (contacts) {
     res.status(HttpCode.OK).json({
@@ -66,7 +68,9 @@ const deleteContactByIdController = async (req, res, next) => {
 }
 
 const addContactController = async (req, res, next) => {
-  const newContact = await addContact(req.body)
+  const { _id } = req.user
+
+  const newContact = await addContact(req.body, _id)
 
   if (newContact) {
     res.status(HttpCode.CREATED).json({
