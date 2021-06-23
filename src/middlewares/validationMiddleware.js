@@ -1,49 +1,62 @@
 const Joi = require('joi')
-const { statusCode } = require('../heplers/constants')
+const { HttpCode } = require('../heplers/constants')
 
 const schemaCreateContact = Joi.object({
-  name: Joi.string().alphanum().min(3).max(30).required(),
+  name: Joi.string()
+    .pattern(/^[a-z\d\-_\s]+$/i)
+    .min(3)
+    .max(30)
+    .required(),
   email: Joi.string()
     .email({
       minDomainSegments: 2,
-      tlds: { allow: ['com', 'net'] }
+      tlds: { allow: ['com', 'net', 'uk', 'ca'] }
     })
     .required(),
-  phone: Joi.string()
-    .pattern(/^(\+)?((\d{2,3}) ?\d|\d)(([ -]?\d)|( ?(\d{2,3}) ?)){5,12}\d$/)
-    .required()
+  phone: Joi.string().required(),
+  favorite: Joi.boolean().required()
 })
 
 const schemaUpdateContact = Joi.object({
-  name: Joi.string().alphanum().min(3).max(30).optional(),
+  name: Joi.string()
+    .pattern(/^[a-z\d\-_\s]+$/i)
+    .min(3)
+    .max(30)
+    .optional(),
   email: Joi.string()
     .email({
       minDomainSegments: 2,
-      tlds: { allow: ['com', 'net'] }
+      tlds: { allow: ['com', 'net', 'uk', 'ca'] }
     })
     .optional(),
-  phone: Joi.string()
-    .pattern(/^(\+)?((\d{2,3}) ?\d|\d)(([ -]?\d)|( ?(\d{2,3}) ?)){5,12}\d$/)
-    .optional()
+  phone: Joi.string().optional(),
+  favorite: Joi.boolean().optional()
+})
+
+const schemaUpdateFavorite = Joi.object({
+  favorite: Joi.boolean().required()
 })
 
 const schemaReplaceContact = Joi.object({
-  name: Joi.string().alphanum().min(3).max(30).required(),
+  name: Joi.string()
+    .pattern(/^[a-z\d\-_\s]+$/i)
+    .min(3)
+    .max(30)
+    .required(),
   email: Joi.string()
     .email({
       minDomainSegments: 2,
-      tlds: { allow: ['com', 'net'] }
+      tlds: { allow: ['com', 'net', 'uk', 'ca'] }
     })
     .required(),
-  phone: Joi.string()
-    .pattern(/^(\+)?((\d{2,3}) ?\d|\d)(([ -]?\d)|( ?(\d{2,3}) ?)){5,12}\d$/)
-    .required()
+  phone: Joi.string().required(),
+  favorite: Joi.boolean().required()
 })
 
 const validate = (shema, body, next) => {
   if (Object.keys(body).length === 0) {
     return next({
-      status: statusCode.BAD_REQUEST,
+      status: HttpCode.BAD_REQUEST,
       message: 'missing fields'
     })
   }
@@ -51,7 +64,7 @@ const validate = (shema, body, next) => {
   if (error) {
     const [{ message }] = error.details
     return next({
-      status: statusCode.BAD_REQUEST,
+      status: HttpCode.BAD_REQUEST,
       message: `${message.replace(/"/g, '')}`
     })
   }
@@ -66,6 +79,10 @@ const validateUpdateContact = (req, res, next) => {
   return validate(schemaUpdateContact, req.body, next)
 }
 
+const validateUpdateFavorite = (req, res, next) => {
+  return validate(schemaUpdateFavorite, req.body, next)
+}
+
 const validateReplaceContact = (req, res, next) => {
   return validate(schemaReplaceContact, req.body, next)
 }
@@ -73,5 +90,6 @@ const validateReplaceContact = (req, res, next) => {
 module.exports = {
   validateCreateContact,
   validateUpdateContact,
-  validateReplaceContact
+  validateReplaceContact,
+  validateUpdateFavorite
 }
