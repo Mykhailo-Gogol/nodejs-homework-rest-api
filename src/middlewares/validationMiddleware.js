@@ -1,5 +1,5 @@
 const Joi = require('joi')
-const { HttpCode } = require('../heplers/constants')
+const { HttpCode } = require('../helpers/constants')
 
 const schemaCreateContact = Joi.object({
   name: Joi.string()

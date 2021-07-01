@@ -1,7 +1,8 @@
 const express = require('express')
 const router = express.Router()
 
-const { asyncWrapper } = require('../../heplers/apiHelpers')
+const { asyncWrapper } = require('../../helpers/apiHelpers')
+const { authMiddleware } = require('../../middlewares/authMiddleware')
 
 const {
   signUpController,
@@ -14,8 +15,8 @@ router.post('/signup', asyncWrapper(signUpController))
 
 router.post('/login', asyncWrapper(loginController))
 
-router.post('/logout', asyncWrapper(logoutController))
+router.post('/logout', authMiddleware, asyncWrapper(logoutController))
 
-router.get('/current', asyncWrapper(getCurrentController))
+router.get('/current', authMiddleware, asyncWrapper(getCurrentController))
 
 module.exports = router

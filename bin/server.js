@@ -1,4 +1,4 @@
-const { HttpCode } = require('../src/heplers/constants')
+const { HttpCode } = require('../src/helpers/constants')
 
 const app = require('../src/app')
 require('dotenv').config()

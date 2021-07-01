@@ -8,7 +8,7 @@ const {
   validateUpdateFavorite
 } = require('../../middlewares/validationMiddleware')
 
-const { asyncWrapper } = require('../../heplers/apiHelpers')
+const { asyncWrapper } = require('../../helpers/apiHelpers')
 
 const { authMiddleware } = require('../../middlewares/authMiddleware')
 

@@ -1,4 +1,4 @@
-const { HttpCode } = require('../heplers/constants')
+const { HttpCode } = require('../helpers/constants')
 
 const {
   getContacts,

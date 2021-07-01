@@ -1,7 +1,12 @@
-const { signUp, login } = require('../services/usersService')
-//  logout, getCurrent
-const { HttpCode } = require('../heplers/constants')
-const { NotAuthorizedError } = require('../heplers/errors')
+const {
+  signUp,
+  login,
+  logout,
+  getCurrent
+} = require('../services/usersService')
+//
+const { HttpCode } = require('../helpers/constants')
+const { NotAuthorizedError } = require('../helpers/errors')
 
 const signUpController = async (req, res) => {
   const { email, password } = req.body
@@ -31,9 +36,27 @@ const loginController = async (req, res, next) => {
   }
 }
 
-const logoutController = async (req, res) => {}
+const logoutController = async (req, res) => {
+  const { _id } = req.user
+  const { token } = req.token
 
-const getCurrentController = async (req, res) => {}
+  await logout(_id, token)
+
+  res.status(HttpCode.OK).json({ code: HttpCode.OK, status: 'success' })
+}
+
+const getCurrentController = async (req, res) => {
+  const { _id } = req.user
+  const user = await getCurrent(_id)
+  res.status(HttpCode.OK).json({
+    code: HttpCode.OK,
+    status: 'success',
+    user: {
+      email: user.email,
+      subscription: user.subscription
+    }
+  })
+}
 
 module.exports = {
   signUpController,
