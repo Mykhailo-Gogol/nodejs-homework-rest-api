@@ -8,7 +8,9 @@ const {
   validateUpdateFavorite
 } = require('../../middlewares/validationMiddleware')
 
-const { asyncErrorWrapper } = require('../../heplers/asyncErrorWrapper')
+const { asyncWrapper } = require('../../helpers/apiHelpers')
+
+const { authMiddleware } = require('../../middlewares/authMiddleware')
 
 const {
   getContactsController,
@@ -19,29 +21,31 @@ const {
   updateFaforiteByIdController
 } = require('../../controllers/contactsController')
 
-router.get('/', asyncErrorWrapper(getContactsController))
+router.use(authMiddleware)
 
-router.get('/:contactId', asyncErrorWrapper(getContactByIdController))
+router.get('/', asyncWrapper(getContactsController))
 
-router.delete('/:contactId', asyncErrorWrapper(deleteContactByIdController))
+router.get('/:contactId', asyncWrapper(getContactByIdController))
 
-router.post('/', validateCreateContact, asyncErrorWrapper(addContactController))
+router.delete('/:contactId', asyncWrapper(deleteContactByIdController))
+
+router.post('/', validateCreateContact, asyncWrapper(addContactController))
 
 router.patch(
   '/:contactId',
   validateUpdateContact,
-  asyncErrorWrapper(updateContactByIdController)
+  asyncWrapper(updateContactByIdController)
 )
 router.patch(
   '/:contactId/favorite',
   validateUpdateFavorite,
-  asyncErrorWrapper(updateFaforiteByIdController)
+  asyncWrapper(updateFaforiteByIdController)
 )
 
 router.put(
   '/:contactId',
   validateReplaceContact,
-  asyncErrorWrapper(updateContactByIdController)
+  asyncWrapper(updateContactByIdController)
 )
 
 module.exports = router

@@ -1,4 +1,4 @@
-const { HttpCode } = require('../heplers/constants')
+const { HttpCode } = require('../helpers/constants')
 
 const {
   getContacts,
@@ -10,13 +10,15 @@ const {
 } = require('../services/contactsService')
 
 const getContactsController = async (req, res, next) => {
-  const contacts = await getContacts()
+  const { _id } = req.user
+
+  const contacts = await getContacts(_id)
 
   if (contacts) {
     res.status(HttpCode.OK).json({
       status: 'success',
       code: HttpCode.OK,
-      data: { contacts }
+      contacts
     })
   } else {
     res.status(HttpCode.BAD_REQUEST).json({
@@ -33,9 +35,9 @@ const getContactByIdController = async (req, res, next) => {
 
   if (contact) {
     res.status(HttpCode.OK).json({
-      status: 'success',
       code: HttpCode.OK,
-      data: { contact }
+      status: 'success',
+      contact
     })
   } else {
     res.status(HttpCode.BAD_REQUEST).json({
@@ -52,10 +54,9 @@ const deleteContactByIdController = async (req, res, next) => {
 
   if (contact) {
     res.status(HttpCode.OK).json({
-      status: 'success',
-      message: 'deleted',
       code: HttpCode.OK,
-      data: { contact }
+      status: 'success',
+      message: 'deleted'
     })
   } else {
     res.status(HttpCode.BAD_REQUEST).json({
@@ -67,14 +68,15 @@ const deleteContactByIdController = async (req, res, next) => {
 }
 
 const addContactController = async (req, res, next) => {
-  const newContact = await addContact(req.body)
+  const { _id } = req.user
+
+  const newContact = await addContact(req.body, _id)
 
   if (newContact) {
     res.status(HttpCode.CREATED).json({
-      status: 'success',
       code: HttpCode.CREATED,
-      message: 'created',
-      data: { newContact }
+      status: 'success',
+      message: 'created'
     })
   } else {
     res.status(HttpCode.BAD_REQUEST).json({
@@ -92,10 +94,9 @@ const updateContactByIdController = async (req, res, next) => {
 
   if (contact) {
     res.status(HttpCode.OK).json({
-      status: 'success',
       code: HttpCode.OK,
-      message: 'updated',
-      data: { contact }
+      status: 'success',
+      message: 'updated'
     })
   } else {
     res.status(HttpCode.BAD_REQUEST).json({
