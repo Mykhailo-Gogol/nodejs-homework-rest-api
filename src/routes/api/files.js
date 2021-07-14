@@ -7,7 +7,7 @@ const { asyncWrapper } = require('../../helpers/apiHelpers')
 const multer = require('multer')
 // const { v4: uuidv4 } = require('uuid')
 
-const FILE_DIR = path.resolve('./static/avatars')
+const FILE_DIR = path.resolve('./public/avatars')
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

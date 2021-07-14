@@ -2,7 +2,9 @@ const {
   signUp,
   login,
   logout,
-  getCurrent
+  getCurrent,
+  updateAvatar,
+  saveUserAvatar
 } = require('../services/usersService')
 //
 const { HttpCode } = require('../helpers/constants')
@@ -58,9 +60,17 @@ const getCurrentController = async (req, res) => {
   })
 }
 
+const updateUserAvatarController = async (req, res) => {
+  const { id } = req.user
+  const avatar = req.user.avatarURL
+  const avatarURL = await updateAvatar(id, req.file, avatar, saveUserAvatar)
+  res.json({ avatarURL })
+}
+
 module.exports = {
   signUpController,
   loginController,
   logoutController,
-  getCurrentController
+  getCurrentController,
+  updateUserAvatarController
 }
