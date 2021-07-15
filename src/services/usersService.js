@@ -1,6 +1,17 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
+const { uuid } = require('uuidv4')
+
+const Jimp = require('jimp')
+const path = require('path')
+const fs = require('fs/promises')
+
+const finalAvatarsFolder = path.join(
+  process.cwd(),
+  'public',
+  process.env.AVATARS_FOLDER
+)
 
 const { User } = require('../model/userModel')
 const { NotAuthorizedError } = require('../helpers/errors')
@@ -41,9 +52,34 @@ const getCurrent = async (id) => {
   return user
 }
 
+const updateAvatar = async (userId, file, avatar, cb) => {
+  const avatarURL = await cb(file, avatar)
+  await User.findByIdAndUpdate(userId, { avatarURL }, { new: true })
+  return avatarURL
+}
+
+const saveUserAvatar = async (file, avatar) => {
+  const pathName = file.path
+  const newAvatar = `${uuid()}-${file.originalname}`
+  const img = await Jimp.read(pathName)
+  await img.autocrop().cover(250, 250).writeAsync(pathName)
+  try {
+    await fs.rename(pathName, path.join(`${finalAvatarsFolder}`, newAvatar))
+  } catch (error) {
+    await fs.unlink(pathName)
+    throw error
+  }
+  // if (avatar.includes(`${process.env.AVATARS_FOLDER}/`)) {
+  //   await fs.unlink(path.join(process.cwd(), 'public', avatar))
+  // }
+  return path.join(process.env.AVATARS_FOLDER, newAvatar).replace('\\', '/')
+}
+
 module.exports = {
   signUp,
   login,
   logout,
-  getCurrent
+  getCurrent,
+  updateAvatar,
+  saveUserAvatar
 }

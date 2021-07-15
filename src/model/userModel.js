@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
+const gravatar = require('gravatar')
 
 const userSchema = new mongoose.Schema({
   owner: {
@@ -23,6 +24,12 @@ const userSchema = new mongoose.Schema({
   token: {
     type: String,
     default: null
+  },
+  avatarURL: {
+    type: String,
+    default: function () {
+      return gravatar.url(this.email, { s: '250' }, true)
+    }
   }
 })
 
