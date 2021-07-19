@@ -7,6 +7,8 @@ const Jimp = require('jimp')
 const path = require('path')
 const fs = require('fs/promises')
 
+const { sendVerifyEmail } = require('./email')
+
 const finalAvatarsFolder = path.join(
   process.cwd(),
   'public',
@@ -18,11 +20,15 @@ const { NotAuthorizedError } = require('../helpers/errors')
 const JWT_SECRET = process.env.JWT_SECRET
 
 const signUp = async (email, password) => {
+  const verifyToken = uuid()
   const user = new User({
     email,
-    password
+    password,
+    verifyToken
   })
   await user.save()
+
+  sendVerifyEmail(email, verifyToken)
 }
 
 const login = async (email, password) => {
@@ -32,6 +38,9 @@ const login = async (email, password) => {
   }
   if (!(await bcrypt.compare(password, user.password))) {
     throw new NotAuthorizedError('Wrong password')
+  }
+  if (!user.verify) {
+    throw new Error('Invalid credentials')
   }
   const token = jwt.sign(
     {
@@ -75,11 +84,22 @@ const saveUserAvatar = async (file, avatar) => {
   return path.join(process.env.AVATARS_FOLDER, newAvatar).replace('\\', '/')
 }
 
+const resendVerificationToken = async (email) => {
+  const user = await User.findOne({ email })
+  if (user.verify) {
+    throw new Error('Verification has already been passed')
+  }
+
+  const { verifyToken } = user
+  sendVerifyEmail(email, verifyToken)
+}
+
 module.exports = {
   signUp,
   login,
   logout,
   getCurrent,
   updateAvatar,
-  saveUserAvatar
+  saveUserAvatar,
+  resendVerificationToken
 }

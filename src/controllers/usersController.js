@@ -4,11 +4,15 @@ const {
   logout,
   getCurrent,
   updateAvatar,
-  saveUserAvatar
+  saveUserAvatar,
+  resendVerificationToken
 } = require('../services/usersService')
+
 //
 const { HttpCode } = require('../helpers/constants')
 const { NotAuthorizedError } = require('../helpers/errors')
+
+const { User } = require('../model/userModel')
 
 const signUpController = async (req, res) => {
   const { email, password } = req.body
@@ -67,10 +71,32 @@ const updateUserAvatarController = async (req, res) => {
   res.json({ avatarURL })
 }
 
+// email
+
+const updateVerifyToken = async (userId, verify, verifyToken) =>
+  await User.findByIdAndUpdate(userId, { verify, verifyToken }, { new: true })
+
+const verificationUserTokenController = async (req, res) => {
+  const verifyToken = req.params.verificationToken
+  const verifiedUser = await User.findOne({ verifyToken })
+  await updateVerifyToken(verifiedUser._id, true, null)
+  res.status(HttpCode.OK).json({ message: 'Verification successful' })
+}
+
+const resendVerificationTokenController = async (req, res) => {
+  const { email } = req.body
+  await resendVerificationToken(email)
+  res.status(HttpCode.OK).json({
+    message: 'Verification email sent'
+  })
+}
+
 module.exports = {
   signUpController,
   loginController,
   logoutController,
   getCurrentController,
-  updateUserAvatarController
+  updateUserAvatarController,
+  verificationUserTokenController,
+  resendVerificationTokenController
 }
