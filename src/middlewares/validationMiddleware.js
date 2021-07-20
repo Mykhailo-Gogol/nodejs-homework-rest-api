@@ -1,6 +1,22 @@
 const Joi = require('joi')
 const { HttpCode } = require('../helpers/constants')
 
+const schemaResendVerificationEmail = Joi.object({
+  email: Joi.string()
+    .email({
+      minDomainSegments: 2,
+      tlds: { allow: false }
+    })
+    .required()
+})
+
+const validateResendVerificationEmail = (req, res, next) => {
+  if (Object.keys(req.body).length === 0) {
+    return next(new Error('missing required field email'))
+  }
+  return validate(schemaResendVerificationEmail, req.body, next)
+}
+
 const schemaCreateContact = Joi.object({
   name: Joi.string()
     .pattern(/^[a-z\d\-_\s]+$/i)
@@ -91,5 +107,6 @@ module.exports = {
   validateCreateContact,
   validateUpdateContact,
   validateReplaceContact,
-  validateUpdateFavorite
+  validateUpdateFavorite,
+  validateResendVerificationEmail
 }
